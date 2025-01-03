@@ -59,6 +59,12 @@ def view_student(id):
         student = conn.execute(f"SELECT * FROM students WHERE id = {id};").fetchone()
     return render_template("view_student.html",student=student)
 
+@app.route("/delete_student/<int:id>",methods=["GET","POST"])
+def delete_student(id):
+    with db_connection() as conn:
+        conn.execute(f"DELETE FROM students WHERE id = {id};")
+        conn.commit()
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.run(debug = True)
