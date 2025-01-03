@@ -35,5 +35,30 @@ def add_student():
             return redirect(url_for('home'))
     return render_template('add_student.html')
 
+@app.route("/update_student/<int:id>",methods=["GET","POST"])
+def update_student(id):
+    with db_connection() as conn:
+        student = conn.execute(f"SELECT * FROM students WHERE id ={id};").fetchone()
+        if request.method == "POST":
+            name=request.form["name"]
+            age=request.form["age"]
+            grade=request.form["grade"]
+            subjects=request.form["subjects"]
+            conn.execute(f"""
+                UPDATE students 
+                SET name = "{name}", age = {age}, grade = "{grade}", subjects = "{subjects}"
+                WHERE id = {id};
+                """)
+            conn.commit()
+            return redirect(url_for('home'))
+    return render_template("update_student.html",student=student)
+
+@app.route("/view_student/<int:id>",methods=["GET"])
+def view_student(id):
+    with db_connection() as conn:
+        student = conn.execute(f"SELECT * FROM students WHERE id = {id};").fetchone()
+    return render_template("view_student.html",student=student)
+
+
 if __name__ == "__main__":
     app.run(debug = True)
